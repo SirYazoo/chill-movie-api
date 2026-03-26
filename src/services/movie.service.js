@@ -47,8 +47,47 @@ const getMovieById = async (id) => {
   }
 };
 
+const updateMovie = async (id, movieData) => {
+  try {
+    const { judul, sinopsis, rating_usia, type, is_premium } = movieData;
+
+    const query = `
+            UPDATE SERIES_FILM 
+            SET judul = ?, sinopsis = ?, rating_usia = ?, type = ?, is_premium = ?
+            WHERE id = ?
+        `;
+
+    const [result] = await db.query(query, [
+      judul,
+      sinopsis,
+      rating_usia,
+      type,
+      is_premium || false,
+      id,
+    ]);
+
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error(`Gagal mengubah data film: ${error.message}`);
+  }
+};
+
+const deleteMovie = async (id) => {
+  try {
+    const query = "DELETE FROM SERIES_FILM WHERE id = ?";
+
+    const [result] = await db.query(query, [id]);
+
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw new Error(`Gagal menghapus data film: ${error.message}`);
+  }
+};
+
 module.exports = {
   getAllMovies,
   addMovie,
   getMovieById,
+  updateMovie,
+  deleteMovie,
 };

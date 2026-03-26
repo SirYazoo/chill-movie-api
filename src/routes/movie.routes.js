@@ -74,4 +74,69 @@ router.post("/", async (req, res) => {
     });
   }
 });
+
+router.put("/:id", async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const movieData = req.body;
+
+    if (!movieData.judul || !movieData.type) {
+      return res.status(400).json({
+        success: false,
+        message: "Judul dan Type film wajib diisi untuk update!",
+      });
+    }
+
+    const isUpdated = await movieService.updateMovie(movieId, movieData);
+
+    if (!isUpdated) {
+      return res.status(404).json({
+        success: false,
+        message: `Gagal update. Film dengan ID ${movieId} tidak ditemukan`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Data film berhasil diperbarui",
+      data: {
+        id: Number(movieId),
+        ...movieData,
+      },
+    });
+  } catch (error) {
+    console.error(`Error PUT /movies/${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan saat mengubah data film",
+    });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  try {
+    const movieId = req.params.id;
+
+    const isDeleted = await movieService.deleteMovie(movieId);
+
+    if (!isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: `Gagal menghapus. Film dengan ID ${movieId} tidak ditemukan`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Data film dengan ID ${movieId} berhasil dihapus`,
+    });
+  } catch (error) {
+    console.error(`Error DELETE /movies/${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan saat menghapus data film",
+    });
+  }
+});
+
 module.exports = router;

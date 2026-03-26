@@ -21,6 +21,32 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const movieId = req.params.id;
+    const movie = await movieService.getMovieById(movieId);
+
+    if (!movie) {
+      return res.status(404).json({
+        success: false,
+        message: `Film dengan ID ${movieId} tidak ditemukan`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Berhasil mengambil detail film",
+      data: movie,
+    });
+  } catch (error) {
+    console.error(`Error GET /movies/${req.params.id}:`, error.message);
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan pada server internal",
+    });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const movieData = req.body;

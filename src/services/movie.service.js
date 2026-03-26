@@ -32,7 +32,23 @@ const addMovie = async (movieData) => {
   }
 };
 
+const getMovieById = async (id) => {
+  try {
+    const query = "SELECT * FROM SERIES_FILM WHERE id = ?";
+    const [rows] = await db.query(query, [id]);
+
+    if (rows.length === 0) {
+      return null;
+    }
+
+    return rows[0];
+  } catch (error) {
+    throw new Error(`Gagal mengambil data film: ${error.message}`);
+  }
+};
+
 module.exports = {
   getAllMovies,
   addMovie,
+  getMovieById,
 };
